@@ -2,7 +2,7 @@
 
 import pylab as pl
 
-__all__ = ['set_pub_single', 'get_handle', 'myfigure', 'hide_tick_labels']
+__all__ = ['set_pub_single', 'get_handle', 'myfigure', 'hide_tick_labels', 'ImageWithColorbar']
 
 def set_pub_single():
     """set rc parameters for publication (single plot)"""
@@ -76,3 +76,40 @@ def hide_tick_labels(ax, which):
         pl.setp(ax.get_xticklabels(), visible=False)
     if which is 'y':
         pl.setp(ax.get_yticklabels(), visible=False)
+
+
+def ImageWithColorbar(ax, image, **kwargs):
+    """
+    Plot image with colorbar on the right
+
+    Parameters
+    ------------
+    ax : axes to draw the image on
+    image : 2-d array
+    Additional kwargs are passed to imshow
+
+    Returns
+    --------
+    ax : image axes
+    cb : colorbar axes
+    """
+
+    from mpl_toolkits.axes_grid1 import make_axes_locatable
+    divider = make_axes_locatable(ax)
+    ax_cb = divider.append_axes("right", size="5%", pad=0.05)
+    fig1 = ax.get_figure()
+    fig1.add_axes(ax_cb)
+
+    dim = pl.atleast_1d(image.shape).astype('float')
+    lim = dim - dim/2.
+    extent = (-lim[0], lim[0], -lim[1], lim[1])
+
+    im = ax.imshow(
+        image,
+        interpolation='nearest', origin='lower', extent=extent, **kwargs)
+    ax.minorticks_on()
+
+    cb = pl.colorbar(im, cax=ax_cb, orientation='vertical')
+    ax_cb.xaxis.tick_bottom()
+
+    return ax, cb
