@@ -41,19 +41,22 @@ def set_pub_single():
 
 
 def set_ipynb():
+    """
+    Set rc params for ipython notebook
+    """
     ### TICKS
     tick_maj_size = 10
     tick_maj_pad  = 5
     tick_min_size = 5
     tick_min_pad  = 5
-    tick_labelsize = 12
+    tick_labelsize = 14
     tick_dict = {'major.size':tick_maj_size, 'major.pad':tick_maj_pad,
                  'minor.size':tick_min_size, 'minor.pad':tick_min_pad,
                  'labelsize':tick_labelsize}
     pl.rc('xtick', **tick_dict)
     pl.rc('ytick', **tick_dict)
     linewidth = 1
-    axes_labelsize = 14
+    axes_labelsize = 16
     ### AXES
     pl.rc('axes', lw=linewidth, labelsize=axes_labelsize)
     ### LINES
@@ -61,7 +64,7 @@ def set_ipynb():
     pl.rc('legend', numpoints=1, scatterpoints=1, frameon=False)
     pl.rc('patch', edgecolor='None')
     ### FIGURE
-    pl.rc('figure', figsize=(6,4))
+    pl.rc('figure', figsize=(8,6))
     pl.rc('figure.subplot', left=0.15, bottom=0.15, top=0.95, right=0.95)
 
     pl.rc('mathtext', default='regular')
@@ -89,8 +92,12 @@ def myfigure(plotting):
 
 
 def hide_tick_labels(ax, which):
-    """ Hide *which*-axis tick labels in ax axis instance """
-
+    """
+    Hide axis tick labels
+    
+    ax : matplotlib Axes instance
+    which : 'x' or 'y'
+    """
     assert which in ['x', 'y']
     if which is 'x':
         pl.setp(ax.get_xticklabels(), visible=False)
@@ -104,7 +111,7 @@ def ImageWithColorbar(ax, image, **kwargs):
 
     Parameters
     ------------
-    ax : axes to draw the image on
+    ax : matplotlib Axes instance
     image : 2-d array
     Additional kwargs are passed to imshow
 
