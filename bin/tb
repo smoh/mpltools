@@ -1,0 +1,40 @@
+#!/usr/bin/env python
+from astropy.table import Table
+from numpy import where
+import re
+import argparse
+
+parser = argparse.ArgumentParser(
+    description="Read and search table from command line"
+    )
+parser.add_argument('table', type=str, help='file path')
+parser.add_argument('-f', '--find', nargs=2,
+                    help='column value')
+parser.add_argument('-c', '--columns')
+args = parser.parse_args()
+
+t = Table.read(args.table)
+t['ROW'] = range(len(t))
+if args.find:
+    col, val = args.find
+    if type(t[col][0].item()) is float:
+        val = float(val)
+        ind = where(t[col] == val)[0]
+    elif type(t[col][0].item()) is int:
+        val = int(val)
+        ind = where(t[col] == val)[0]
+    elif type(t[col][0].item()) is str:
+        ind = [i for i, s in enumerate(t[col]) if len(re.findall(val, s)) > 0]
+    nmatches = len(ind)
+    if nmatches == 0:
+        print "No matches found"
+    else:
+        print 'Total %i matches' % (nmatches)
+        if args.columns:
+            print t[['ROW']+[args.columns]][ind]
+        else:
+            print t[ind]
+else:
+    ncols, nrows = len(t.colnames), len(t)
+    print "%i columns %i rows" % (ncols, nrows)
+    print "\n".join(["%4i %s" % (i, c) for i, c in enumerate(t.colnames, 1)])
